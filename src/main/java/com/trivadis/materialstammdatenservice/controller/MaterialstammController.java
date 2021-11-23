@@ -1,6 +1,5 @@
 package com.trivadis.materialstammdatenservice.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class MaterialstammController {
 	// http://localhost:8080/materialstamm/1
 	@GetMapping("/materialstamm/{id}")
 	public Materialstamm materialstammPerIdAuslesen(@PathVariable("id") Long id) {
-		return materialstammRepository.findById(id).get();
+		return materialstammRepository.findById(id).orElse(null);
 	}
 
 	@PostMapping("/materialstamm")
