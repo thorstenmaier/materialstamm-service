@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,9 @@ public class MaterialstammController {
 	@Autowired
 	private MaterialstammRepository materialstammRepository;
 
+	@Autowired
+	private JmsTemplate jmsTemplate;
+
 	@GetMapping("/materialstamm")
 	public List<Materialstamm> materialstammAuslesen() {
 		return materialstammRepository.findAll();
@@ -35,7 +39,9 @@ public class MaterialstammController {
 
 	@PostMapping("/materialstamm")
 	public Materialstamm neuenMaterialstammAnlegen(@RequestBody Materialstamm materialstamm) {
-		return materialstammRepository.save(materialstamm);
+		Materialstamm db = materialstammRepository.save(materialstamm);
+		jmsTemplate.convertAndSend("materialstamm", db.getId());
+		return db;
 	}
 
 	@PutMapping("/materialstamm/{id}")
