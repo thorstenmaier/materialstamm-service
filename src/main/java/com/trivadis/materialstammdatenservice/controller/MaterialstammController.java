@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trivadis.materialstammdatenservice.domain.Materialstamm;
 import com.trivadis.materialstammdatenservice.repository.MaterialstammRepository;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+
 @RestController
 public class MaterialstammController {
 
@@ -26,8 +29,15 @@ public class MaterialstammController {
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
+	private Counter counter;
+
+	public MaterialstammController(MeterRegistry meterRegistry) {
+		counter = meterRegistry.counter("materialstammAbgerufen");
+	}
+
 	@GetMapping("/materialstamm")
 	public List<Materialstamm> materialstammAuslesen() {
+		counter.increment();
 		return materialstammRepository.findAll();
 	}
 
